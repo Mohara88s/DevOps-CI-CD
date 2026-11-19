@@ -1,10 +1,21 @@
-#!/bin/sh
-echo "start instalation"
+#!/bin/bash
+set -e
+
+echo "Start installation"
+
+if [ "$(id -u)" -ne 0 ]; then
+    echo "Run script as root or with sudo"
+    exit 1
+fi
 
 if ! command -v docker > /dev/null 2>&1; then
     apt-get update
     apt-get install -y docker.io
     echo "Docker is installed"
+fi
+
+if [ -n "$SUDO_USER" ]; then
+    usermod -aG docker "$SUDO_USER"
 fi
 
 if ! command -v docker-compose > /dev/null 2>&1 && ! docker compose version > /dev/null 2>&1; then
@@ -16,17 +27,19 @@ if ! command -v docker-compose > /dev/null 2>&1 && ! docker compose version > /d
     echo "Docker Compose is installed"
 fi
 
-if ! command -v python3 > /dev/null 2>&1; then
+if ! command -v python3 > /dev/null 2>&1 || ! python3 -c "import sys; exit(0 if sys.version_info >= (3, 9) else 1)"; then
     apt-get update
-    apt-get install -y python3 python3-pip
-    echo "Python is installed"
+    apt-get install -y python3 python3-pip python3-venv
+    echo "Python 3.9+ is installed"
 else
-    apt-get install -y python3-pip
+    apt-get install -y python3-pip python3-venv
 fi
 
-if ! python3 -c "import django" > /dev/null 2>&1; then
-    pip3 install --break-system-packages django
+VENV_DIR="/opt/django-venv"
+if [ ! -x "$VENV_DIR/bin/python" ] || ! "$VENV_DIR/bin/python" -c "import django" > /dev/null 2>&1; then
+    python3 -m venv "$VENV_DIR"
+    "$VENV_DIR/bin/pip" install django
     echo "Django is installed"
 fi
 
-echo "script is completed"
+echo "Script is completed"
