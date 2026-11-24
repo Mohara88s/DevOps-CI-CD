@@ -61,3 +61,9 @@ tfplan
 # Локальні конфігураційні файли CLI
 .terraformrc
 terraform.rc
+
+# Локальні файли стану Terraform
+terraform.tfstate
+terraform.tfstate.*
+*.tfstate
+*.tfstate.*
