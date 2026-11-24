@@ -32,3 +32,32 @@ env/
 *~
 .DS_Store
 Thumbs.db
+
+# Локальні директорії Terraform та кеш провайдерів
+**/.terraform/*
+
+# Локальні файли стану (можуть містити секрети й метадані)
+*.tfstate
+*.tfstate.*
+
+# Логи аварійного завершення Terraform
+crash.log
+crash.*.log
+
+# Файли зі змінними, які можуть містити чутливі дані (за потреби)
+*.tfvars
+*.tfvars.json
+
+# Файли перевизначення конфігурації
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# Збережені бінарні плани
+*.tfplan
+tfplan
+
+# Локальні конфігураційні файли CLI
+.terraformrc
+terraform.rc
